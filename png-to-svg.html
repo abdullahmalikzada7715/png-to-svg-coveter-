@@ -1,0 +1,49 @@
+Role & Project Overview
+
+You are a Principal Frontend & Computer Vision Engineer. Build a sleek, minimalist, single-page React application using Tailwind CSS (dark mode palette: slate-900 / zinc-900) and Lucide Icons.
+
+The app is a 100% Client-Side Black & White PNG-to-Editable Centerline SVG Converter designed for personal icon workflows.
+
+---
+
+1. Technical Stack & Execution Constraints
+
+- Framework: React with TypeScript (Vite or Next.js Client Component).
+- UI & Icons: Tailwind CSS, Lucide React (`Upload`, `Download`, `SlidersHorizontal`, `RefreshCw`, `Check`, `Image`, `Layers`, `Zap`, `Maximize2`, `FileCode`).
+- Processing Engine: Pure JavaScript / HTML5 Canvas API (Strictly 100% client-side inside the browser web worker or main thread, zero backend API dependency).
+
+---
+
+2. Core Image Vectorization Architecture (CRITICAL REQUIREMENTS)
+
+A. Polarity Detection & Binarization
+- Render uploaded PNG/JPG/WebP to an offscreen HTML5 `<canvas>`.
+- Auto-detect image background/foreground polarity (light-on-dark vs dark-on-light) by sampling image borders to prevent tracing inverted background frames.
+- Apply high-contrast thresholding controlled by a user-adjustable slider (default: 128, range: 0–255).
+
+B. Skeletonization & Centerline Extraction
+- Apply an optimized Zhang-Suen Thinning Algorithm to reduce shapes to single-pixel-wide line strokes.
+- Endpoint Protection & Knob Elimination: Prevent micro-looping or bulbous distortions at line tips ("knobs/bulbs"). Ensure dead-ends terminate strictly as a single-pixel line.
+- Post-process the extracted skeleton graph to collapse any endpoint pixel clusters or loops within a 3-pixel radius into a single precise endpoint coordinate.
+
+C. Gap Closing & Noise Pruning
+- Morphological Closing: Auto-detect and bridge minor pixel gaps (3-5 pixels) along linear trajectories using dilation/erosion passes to avoid broken stroke segments.
+- Spur/Spike Pruning: Scan skeleton paths and automatically drop any dead-end branch or stray artifact shorter than 5 pixels before path tracing.
+
+D. Path Fitting, Smooth Geometry & Node Reduction
+- Angle-Aware Ramer-Douglas-Peucker (RDP) Simplification: Adjustable tolerance slider (range: 0.5–5.0). Any joint sharper than 150° must be preserved as a hard corner to prevent overshoot on V-shape joints (e.g., checkmarks).
+- Curvature Auto-Tune Mode: Automatically adjust RDP tolerance based on local curvature analysis so circular/curved paths have reduced node density (eliminating jagged/uneven appearance in Adobe Illustrator), while sharp corners remain crisp.
+- Curve Smoothing: Apply cubic Bézier curve fitting to smooth circular/curved geometry without introducing jagged pixel steps.
+
+E. Unexpanded SVG Output Construction & Export
+- Output MUST consist strictly of unexpanded, editable `<path>` elements with standard stroke attributes:
+  ```xml
+  <path 
+    d="..." 
+    fill="none" 
+    stroke="#000000" 
+    stroke-width="10" 
+    stroke-linecap="round" 
+    stroke-linejoin="round" 
+    stroke-miterlimit="10" 
+  />
