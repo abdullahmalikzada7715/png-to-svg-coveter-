@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>ToolCraft • Image & Converter Tools</title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <script src="https://unpkg.com/lucide@latest">
+  </script>
+  <style>
+    body {
+      background: #0b0f19;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      scroll-behavior: smooth;
+    }
+    .glass-card {
+      background: rgba(18, 24, 36, 0.8);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 1.25rem;
+    }
+    .hero-glow {
+      background: radial-gradient(circle at 30% 10%, rgba(56, 189, 248, 0.12), transparent 60%);
+    }
+    .icon-badge {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+    .tool-card {
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .tool-card:hover {
+      border-color: #38bdf8;
+      background: rgba(30, 41, 59, 0.7);
+      transform: translateY(-3px);
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(56,189,248,0.4);
+      transition: 0.25s;
+    }
+    .modal-content {
+      background: #111827;
+      border: 1px solid #2d3748;
+    }
+    canvas {
+      display: none;
+    }
+    .range-slider::-webkit-slider-thumb {
+      appearance: none;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #38bdf8;
+      cursor: pointer;
+      border: none;
+    }
+  </style>
+</head>
+<body class="text-zinc-200">
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+
+  <!-- HEADER -->
+  <header class="flex flex-wrap items-center justify-between gap-4 mb-10">
+    <div class="flex items-center gap-2.5">
+      <div class="w-10 h-10 bg-sky-500/20 rounded-xl flex items-center justify-center">
+        <i data-lucide="command" class="w-6 h-6 text-sky-400"></i>
+      </div>
+      <span class="text-2xl font-bold text-white">Tool<span class="text-sky-400">Craft</span></span>
+    </div>
+    <div class="flex items-center gap-4 text-sm font-medium text-zinc-400">
+      <a href="#" class="hover:text-white">Home</a>
+      <a href="#tools-section" class="hover:text-white">Tools</a>
+      <button onclick="scrollToTools()" class="bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 px-4 py-2 rounded-full text-sky-300 text-sm transition">
+        <i data-lucide="zap" class="w-4 h-4 inline mr-1"></i> Launch app
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero-glow rounded-3xl p-6 md:p-10 mb-12 text-center">
+    <span class="bg-sky-500/15 text-sky-300 px-4 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-2 mb-5">
+      <i data-lucide="zap" class="w-3.5 h-3.5"></i> 6+ WORKING TOOLS
+    </span>
+    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white max-w-3xl mx-auto leading-tight">
+      Every image tool <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">ready to use</span>
+    </h1>
+    <p class="text-zinc-400 text-lg max-w-2xl mx-auto mt-5 mb-8">
+      Convert, resize, compress, vectorize — all inside your browser. Click any tool below.
+    </p>
+  </section>
+
+  <!-- TOOLS GRID (working links) -->
+  <div id="tools-section" class="mb-12">
+    <h2 class="text-2xl md:text-3xl font-bold text-white mb-6 flex items-center gap-3">
+      <i data-lucide="sparkles" class="w-7 h-7 text-sky-400"></i> Working image tools
+    </h2>
+    <div class="tool-grid">
+      <div onclick="openTool('png2svg')" class="glass-card rounded-2xl p-5 tool-card cursor-pointer">
+        <div class="icon-badge w-12 h-12 rounded-xl flex items-center justify-center mb-4"><i data-lucide="file-image" class="w-6 h-6 text-emerald-400"></i></div>
+        <h3 class="font-semibold text-white text-lg">PNG to SVG</h3><p class="text-xs text-zinc-500">Centerline vector</p>
+      </div>
+      <div onclick="openTool('jpg2png')" class="glass-card rounded-2xl p-5 tool-card cursor-pointer">
+        <div class="icon-badge w-12 h-12 rounded-xl flex items-center justify-center mb-4"><i data-lucide="image-plus" class="w-6 h-6 text-purple-400"></i></div>
+        <h3 class="font-semibold text-white text-lg">JPG → PNG</h3><p class="text-xs text-zinc-500">Convert format</p>
+      </div>
+      <div onclick="openTool('resize')" class="glass-card rounded-2xl p-5 tool-card cursor-pointer">
+        <div class="icon-badge w-12 h-12 rounded-xl flex items-center justify-center mb-4"><i data-lucide="crop" class="w-6 h-6 text-amber-400"></i></div>
+        <h3 class="font-semibold text-white text-lg">Resize</h3><p class="text-xs text-zinc-500">Dimensions</p>
+      </div>
+      <div onclick="openTool('compress')" class="glass-card rounded-2xl p-5 tool-card cursor-pointer">
+        <div class="icon-badge w-12 h-12 rounded-xl flex items-center justify-center mb-4"><i data-lucide="shrink" class="w-6 h-6 text-rose-400"></i></div>
+        <h3 class="font-semibold text-white text-lg">Compress</h3><p class="text-xs text-zinc-500">JPEG/PNG</p>
+      </div>
+      <div onclick="openTool('bgremove')" class="glass-card rounded-2xl p-5 tool-card cursor-pointer">
+        <div class="icon-badge w-12 h-12 rounded-xl flex items-center justify-center mb-4"><i data-lucide="scissors" class="w-6 h-6 text-cyan-400"></i></div>
+        <h3 class="font-semibold text-white text-lg">BG Remover</h3><p class="text-xs text-zinc-500">Simple threshold</p>
+      </div>
+      <div onclick="openTool('grayscale')" class="glass-card rounded-2xl p-5 tool-card cursor-pointer">
+        <div class="icon-badge w-12 h-12 rounded-xl flex items-center justify-center mb-4"><i data-lucide="palette" class="w-6 h-6 text-pink-400"></i></div>
+        <h3 class="font-semibold text-white text-lg">Grayscale</h3><p class="text-xs text-zinc-500">B&W filter</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="grid md:grid-cols-3 gap-6 mb-14">
+    <div class="glass-card rounded-2xl p-6 feature-card"><i data-lucide="shield-check" class="w-10 h-10 text-sky-400 mb-4"></i><h4 class="text-white font-semibold text-lg">100% private</h4><p class="text-zinc-500 text-sm">All processing in your browser.</p></div>
+    <div class="glass-card rounded-2xl p-6 feature-card"><i data-lucide="zap" class="w-10 h-10 text-amber-400 mb-4"></i><h4 class="text-white font-semibold text-lg">Instant preview</h4><p class="text-zinc-500 text-sm">Canvas & web APIs.</p></div>
+    <div class="glass-card rounded-2xl p-6 feature-card"><i data-lucide="smartphone" class="w-10 h-10 text-emerald-400 mb-4"></i><h4 class="text-white font-semibold text-lg">Mobile friendly</h4><p class="text-zinc-500 text-sm">Works on all screens.</p></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-zinc-800 pt-8 flex justify-between text-sm text-zinc-600">
+    <span>© 2025 ToolCraft</span>
+    <span>Client‑side tools</span>
+  </footer>
+</div>
+
+<!-- ========== MODAL FOR TOOLS ========== -->
+<div id="toolModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+  <div class="modal-content rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-5 md:p-7 relative">
+    <button onclick="closeModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-2xl">&times;</button>
+    <div id="modalTitle" class="text-xl font-bold text-white mb-4"></div>
+    <div id="modalBody" class="space-y-4"></div>
+  </div>
+</div>
+
+<!-- Hidden canvases for processing -->
+<canvas id="hiddenCanvas"></canvas>
+
+<script>
+  lucide.createIcons();
+
+  // ---------- MODAL LOGIC ----------
+  function openTool(toolId) {
+    document.getElementById('toolModal').classList.remove('hidden');
+    const title = document.getElementById('modalTitle');
+    const body = document.getElementById('modalBody');
+    
+    switch(toolId) {
+      case 'png2svg': title.innerText = 'PNG to SVG (Centerline)'; body.innerHTML = png2svgUI(); break;
+      case 'jpg2png': title.innerText = 'JPG / WEBP → PNG Converter'; body.innerHTML = convertUI('png'); break;
+      case 'resize': title.innerText = 'Image Resize'; body.innerHTML = resizeUI(); break;
+      case 'compress': title.innerText = 'Compress Image (JPEG)'; body.innerHTML = compressUI(); break;
+      case 'bgremove': title.innerText = 'Background Remover (threshold)'; body.innerHTML = bgRemoveUI(); break;
+      case 'grayscale': title.innerText = 'Grayscale Filter'; body.innerHTML = grayscaleUI(); break;
+      default: body.innerHTML = '<p class="text-zinc-400">Tool coming soon.</p>';
+    }
+    lucide.createIcons();
+    setTimeout(() => { if (toolId==='png2svg') bindPng2Svg(); else if (toolId==='jpg2png') bindConvert('png'); else if (toolId==='resize') bindResize(); else if (toolId==='compress') bindCompress(); else if (toolId==='bgremove') bindBgRemove(); else if (toolId==='grayscale') bindGrayscale(); }, 50);
+  }
+
+  function closeModal() { document.getElementById('toolModal').classList.add('hidden'); }
+  function scrollToTools() { document.getElementById('tools-section').scrollIntoView({behavior:'smooth'}); }
+
+  // ---------- UI TEMPLATES ----------
+  function fileInputHTML(accept, id='fileInput') {
+    return `<input type="file" id="${id}" accept="${accept}" class="w-full text-sm text-zinc-300 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-sky-500 file:text-black file:font-medium hover:file:bg-sky-400"/>`;
+  }
+
+  function png2svgUI() {
+    return `
+      ${fileInputHTML('image/png,image/jpeg,image/webp', 'svgFile')}
+      <div class="flex gap-3 items-center"><span class="text-xs">Threshold</span><input id="thresh" type="range" min="0" max="255" value="128" class="range-slider w-full"><span id="threshVal" class="text-xs">128</span></div>
+      <button id="runSvg" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-xl">Generate SVG</button>
+      <div id="svgResult" class="text-xs font-mono bg-zinc-900 p-3 rounded max-h-40 overflow-auto"></div>
+      <canvas id="svgCanvas" class="hidden"></canvas>
+    `;
+  }
+
+  function convertUI(format) {
+    return `${fileInputHTML('image/*','convFile')} <button id="runConv" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl">Convert to ${format.toUpperCase()}</button>
+    <a id="convDownload" class="hidden bg-emerald-600 px-4 py-2 rounded-xl text-white inline-block">Download</a>`;
+  }
+
+  function resizeUI() {
+    return `${fileInputHTML('image/*','resizeFile')}
+    <div class="flex gap-3"><input id="resizeW" type="number" placeholder="Width" class="bg-zinc-800 rounded px-3 py-2 w-24"><input id="resizeH" type="number" placeholder="Height" class="bg-zinc-800 rounded px-3 py-2 w-24"></div>
+    <button id="runResize" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl">Resize</button>
+    <a id="resizeDownload" class="hidden bg-emerald-600 px-4 py-2 rounded-xl text-white inline-block">Download</a>`;
+  }
+
+  function compressUI() {
+    return `${fileInputHTML('image/*','compFile')} <div class="flex gap-3"><span class="text-xs">Quality</span><input id="quality" type="range" min="10" max="100" value="70" class="range-slider w-full"><span id="qualVal">70</span></div>
+    <button id="runComp" class="bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl">Compress</button>
+    <a id="compDownload" class="hidden bg-emerald-600 px-4 py-2 rounded-xl text-white inline-block">Download</a>`;
+  }
+
+  function bgRemoveUI() {
+    return `${fileInputHTML('image/*','bgFile')} <div class="flex gap-3"><span class="text-xs">Threshold</span><input id="bgThresh" type="range" min="0" max="255" value="200" class="range-slider w-full"><span id="bgThreshVal">200</span></div>
+    <button id="runBg" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-xl">Remove Background</button>
+    <a id="bgDownload" class="hidden bg-emerald-600 px-4 py-2 rounded-xl text-white inline-block">Download PNG</a>`;
+  }
+
+  function grayscaleUI() {
+    return `${fileInputHTML('image/*','grayFile')} <button id="runGray" class="bg-pink-600 hover:bg-pink-500 text-white px-4 py-2 rounded-xl">Apply Grayscale</button>
+    <a id="grayDownload" class="hidden bg-emerald-600 px-4 py-2 rounded-xl text-white inline-block">Download</a>`;
+  }
+
+  // ---------- TOOL LOGIC ----------
+  function loadImage(fileInputId, callback) {
+    const file = document.getElementById(fileInputId).files[0];
+    if (!file) { alert('Please select an image'); return; }
+    const reader = new FileReader();
+    reader.onload = e => { const img = new Image(); img.onload = () => callback(img); img.src = e.target.result; };
+    reader.readAsDataURL(file);
+  }
+
+  function canvasFromImg(img) {
+    const c = document.getElementById('hiddenCanvas');
+    c.width = img.width; c.height = img.height;
+    c.getContext('2d').drawImage(img, 0, 0);
+    return c;
+  }
+
+  // PNG to SVG (simplified centerline)
+  function bindPng2Svg() {
+    document.getElementById('thresh').addEventListener('input', e => document.getElementById('threshVal').textContent = e.target.value);
+    document.getElementById('runSvg').onclick = () => {
+      loadImage('svgFile', img => {
+        const w=img.width, h=img.height;
+        const c=canvasFromImg(img);
+        const ctx=c.getContext('2d');
+        const imgData=ctx.getImageData(0,0,w,h);
+        const th=parseInt(document.getElementById('thresh').value);
+        let svgPaths = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">`;
+        for (let y=0; y<h; y+=2) {
+          let runStart=-1;
+          for (let x=0; x<w; x++) {
+            let i=(y*w+x)*4, gray=imgData.data[i]*0.299+imgData.data[i+1]*0.587+imgData.data[i+2]*0.114;
+            if (gray<th) { if(runStart===-1) runStart=x; }
+            else { if(runStart!==-1) { svgPaths+=`<line x1="${runStart}" y1="${y}" x2="${x-1}" y2="${y}" stroke="black" stroke-width="4"/>`; runStart=-1; } }
+          }
+          if(runStart!==-1) svgPaths+=`<line x1="${runStart}" y1="${y}" x2="${w-1}" y2="${y}" stroke="black" stroke-width="4"/>`;
+        }
+        svgPaths += '</svg>';
+        document.getElementById('svgResult').innerText = svgPaths;
+      });
+    };
+  }
+
+  function bindConvert(format) {
+    document.getElementById('runConv').onclick = () => {
+      loadImage('convFile', img => {
+        const c=canvasFromImg(img);
+        c.toBlob(blob => {
+          const url=URL.createObjectURL(blob);
+          const a=document.getElementById('convDownload');
+          a.href=url; a.download='converted.'+format; a.classList.remove('hidden'); a.textContent='Download '+format.toUpperCase();
+        }, 'image/'+format);
+      });
+    };
+  }
+
+  function bindResize() {
+    document.getElementById('runResize').onclick = () => {
+      loadImage('resizeFile', img => {
+        const nw=parseInt(document.getElementById('resizeW').value) || img.width;
+        const nh=parseInt(document.getElementById('resizeH').value) || img.height;
+        const c=document.getElementById('hiddenCanvas');
+        c.width=nw; c.height=nh;
+        c.getContext('2d').drawImage(img,0,0,nw,nh);
+        c.toBlob(blob => {
+          const a=document.getElementById('resizeDownload');
+          a.href=URL.createObjectURL(blob); a.download='resized.png'; a.classList.remove('hidden');
+        },'image/png');
+      });
+    };
+  }
+
+  function bindCompress() {
+    document.getElementById('quality').addEventListener('input', e => document.getElementById('qualVal').textContent = e.target.value);
+    document.getElementById('runComp').onclick = () => {
+      loadImage('compFile', img => {
+        const c=canvasFromImg(img);
+        c.toBlob(blob => {
+          const a=document.getElementById('compDownload');
+          a.href=URL.createObjectURL(blob); a.download='compressed.jpg'; a.classList.remove('hidden');
+        }, 'image/jpeg', parseFloat(document.getElementById('quality').value)/100);
+      });
+    };
+  }
+
+  function bindBgRemove() {
+    document.getElementById('bgThresh').addEventListener('input', e => document.getElementById('bgThreshVal').textContent = e.target.value);
+    document.getElementById('runBg').onclick = () => {
+      loadImage('bgFile', img => {
+        const c=canvasFromImg(img);
+        const ctx=c.getContext('2d');
+        const data=ctx.getImageData(0,0,c.width,c.height);
+        const th=parseInt(document.getElementById('bgThresh').value);
+        for (let i=0; i<data.data.length; i+=4) {
+          let gray = data.data[i]*0.299+data.data[i+1]*0.587+data.data[i+2]*0.114;
+          if (gray > th) data.data[i+3]=0;
+        }
+        ctx.putImageData(data,0,0);
+        c.toBlob(blob => {
+          const a=document.getElementById('bgDownload');
+          a.href=URL.createObjectURL(blob); a.download='nobg.png'; a.classList.remove('hidden');
+        },'image/png');
+      });
+    };
+  }
+
+  function bindGrayscale() {
+    document.getElementById('runGray').onclick = () => {
+      loadImage('grayFile', img => {
+        const c=canvasFromImg(img);
+        const ctx=c.getContext('2d');
+        const data=ctx.getImageData(0,0,c.width,c.height);
+        for (let i=0; i<data.data.length; i+=4) {
+          let gray = data.data[i]*0.299+data.data[i+1]*0.587+data.data[i+2]*0.114;
+          data.data[i]=data.data[i+1]=data.data[i+2]=gray;
+        }
+        ctx.putImageData(data,0,0);
+        c.toBlob(blob => {
+          const a=document.getElementById('grayDownload');
+          a.href=URL.createObjectURL(blob); a.download='grayscale.png'; a.classList.remove('hidden');
+        },'image/png');
+      });
+    };
+  }
+</script>
+</body>
+</html>
